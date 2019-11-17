@@ -1,7 +1,6 @@
 const dispatch = require('../dispatch/central-dispatch');
 const log = require('../util/log');
 const maybeFormatMessage = require('../util/maybe-format-message');
-
 const BlockType = require('./block-type');
 
 // These extensions are currently built into the VM repository but should not be loaded at startup.
