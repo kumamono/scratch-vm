@@ -46,7 +46,6 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
                 },
                 {
                     opcode: 'getBrowser',
-                    text: 'browser',
                     blockType: BlockType.REPORTER,
                     text: '[test]を2倍にする',
                     arguments: {
@@ -54,8 +53,12 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
                         type: ArgumentType.STRING,
                         defaultValue: "0",
                       }
-
                     }
+                },
+                {
+                  opcode: 'randfruit',
+                  blockType: BlockType.REPORTER,
+                  text: 'ランダムな果物',
                 }
             ],
             menus: {
@@ -84,6 +87,11 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
         return text;　//true false で真偽を返す
 
 
+    }
+    randfruit (){
+      const fruits = ["パイナップル","バナナ","イチゴ","リンゴ","サクランボ","ブドウ","スイカ","みかん"];
+      const fruit = fruits[Math.floor(Math.random() * fruits.length)];
+      return fruit;
     }
 }
 
