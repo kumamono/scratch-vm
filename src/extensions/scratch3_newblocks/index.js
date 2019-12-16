@@ -80,8 +80,13 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
                 },
                 {
                   opcode: 'randfruit',
-                  blockType: BlockType.REPORTER,
+                  blockType: BlockType.COMMAND,
                   text: 'ランダムな果物',
+                },
+                {
+                  opcode: 'menutest',
+                  blockType: BlockType.REPORTER,
+                  text: 'menutest',
                 },
             ],
             menus: {
@@ -114,8 +119,29 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
         return text;　//true false で真偽を返す
     }
     writelist(args){
-      console.log(typeof args.test2);
-      console.log(args.test2);
+      const valiableslist = [];
+      const variables = this.runtime.targets[0].variables;
+      Object.keys(variables).forEach(function (key){
+        valiableslist.push(variables[key].name);
+      }
+    );
+    const idlist = [];
+    const ids = this.runtime.targets[0].variables;
+    Object.keys(ids).forEach(function (key){
+      idlist.push(variables[key].id);
+    }
+  );
+    var nameresult = valiableslist.indexOf(args.test2)
+     const selectlist = idlist.splice(args.nameresult)
+     var keyName = 'name'
+     var user = { 'name':selectlist[0]}
+     var userName = user[keyName]
+     console.log(userName)
+      //console.log(nameresult);
+      //console.log(idlist);
+     console.log(selectlist[0])
+     //console.log(args.test2)
+     console.log(this.runtime.targets[0].variable.(userName););
     }
     randfruit (){
       const fruits = ["パイナップル","バナナ","イチゴ","リンゴ","サクランボ","ブドウ","スイカ","みかん"];
@@ -126,20 +152,53 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
         return fruit;
     }
     Looptext (){
-        console.log(typeof  this.runtime.targets[0].variables);
+        console.log(this.runtime.targets[0].variables);
         //console.log(this.runtime.targets[0].variables[`jEk@4|i[#Fk?(8x)AV.-my variable`].name =  );
-        console.log(this.runtime.targets[0].createVariable("`perikan.-my variable",'a-name', Variable.SCALAR_TYPE));
     }
+    /**[    *menulistvaliables () {
+    *  const valiableslist = [];
+    *  const variables = this.runtime.targets[0].variables;
+    *  Object.keys(variables).forEach(function (key){
+    *    valiableslist.push(variables[key].name);
+    *  }
+    *);
+    *  console.log(valiableslist);
+    *  return valiableslist;
+    *}
+    */
     menulistvaliables () {
       const valiableslist = [];
       const variables = this.runtime.targets[0].variables;
       Object.keys(variables).forEach(function (key){
         valiableslist.push(variables[key].name);
-      } 
+      }
     );
-      console.log(valiableslist);
-      return valiableslist;
+    //console.log(valiableslist);
+    return valiableslist
     }
+
+  //  menutest (){
+  //    const namelist = [];
+  //    const names = this.runtime.targets[0].variables;
+  //    Object.keys(names).forEach(function (key){
+  //      namelist.push(names[key].name)
+  //    }
+  //   );
+      //const valiableslist = [];
+      ///const variables = this.runtime.targets[0].variables;
+      //Object.keys(variables).forEach(function (key){
+      //valiableslist.push(variables[key].id);
+
+        //これをフィルターして
+        //そのキーの位置の特定の処理を行う
+      //}
+    //);
+    //var items = namelist;
+    //var result = items.indexOf('test2',0);
+//    console.log(valiableslist);
+///    console.log(namelist);
+//    console.log(argus.test2);
+  //  }
 }
 
 
