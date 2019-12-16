@@ -73,17 +73,6 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                     opcode: 'randfruit',
                     blockType: BlockType.REPORTER,
                     text: 'ランダムな果物'
-                },
-                {
-                    opcode: 'getValues',
-                    blockType: BlockType.REPORTER,
-                    text: '[VALUE]の値',
-                    arguments: {
-                        VALUE: {
-                            type: ArgumentType.STRING,
-                            menu: 'dMenu'
-                        }
-                    }
                 }
             ],
             menus: {
@@ -93,15 +82,25 @@ class Scratch3NewBlocks { // とりあえず初期化してる
     }
 
     /**
-     * Return valiable value,
-     * @param {object} args - the block arguments.
-     * @property {number} VALUE - a name of variable.
+     * Return a value of variable.
+     * @param {string} name - the name of target variable.
      * @return {string} a value of the variable.
      */
-
-    getValues(args) {
+    getValue(name) {
         let vals = this.runtime.targets[0].variables;
-        return vals[this.variables[args.VALUE]].value;
+        return vals[this.variables[name]].value;
+    }
+
+    /**
+     * Set a value to variable.
+     * @params {string} name - the name of target variable.
+     * @params {string} value - 代入する値
+     * example: this.setValue("hoge",[1,2,3,4])
+     */
+    setValue(name,value) {
+        let vals = this.runtime.targets[0].variables;
+        let valiableId = this.variables[name];
+        vals[valiableId].value = value;
     }
 
     /**
@@ -251,7 +250,6 @@ class Scratch3NewBlocks { // とりあえず初期化してる
         console.log(this.variables);
         console.log(this.variablesNameList);
     }
-
 }
 
 
