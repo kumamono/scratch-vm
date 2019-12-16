@@ -38,7 +38,7 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
             blocks: [
                 {
                     opcode: 'writeLog',//保存時にjsonに書き込まれる:既存のものと被らなければ基本的にok
-                    blockType: BlockType.COMMAND,//ぶろっくのタイプ（詳しくは公式参照）ブロックの形とかを定義するこれはスタックブロックと呼ばれ上下につながる
+                    blockType: BlockType.LOOP,//ぶろっくのタイプ（詳しくは公式参照）ブロックの形とかを定義するこれはスタックブロックと呼ばれ上下につながる
                   //  //blockType: BlockType.BOOLEAN,   //条件：状態を意味する六角形のやつ
                     //blockType: BlockType.HAT,     //上に何も置けない開始のブロック
                     //blockType: BlockType.LOOP,   //C型ブロック　繰り返しなど中に何かを入れて動かす
@@ -65,7 +65,7 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
                 },
                 {
                     opcode: 'writelist',
-                    blockType: BlockType.COMMAND,
+                    blockType: BlockType.LOOP,
                     text: '[test2]に中身を代入する',
                     arguments: {
                       test2:{
