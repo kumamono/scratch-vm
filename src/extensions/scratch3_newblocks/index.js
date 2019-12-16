@@ -119,29 +119,26 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
         return text;　//true false で真偽を返す
     }
     writelist(args){
-      const valiableslist = [];
-      const variables = this.runtime.targets[0].variables;
+      var valiableslist = [];
+      var variables = this.runtime.targets[0].variables;
       Object.keys(variables).forEach(function (key){
         valiableslist.push(variables[key].name);
       }
     );
-    const idlist = [];
-    const ids = this.runtime.targets[0].variables;
+    var idlist = [];
+    var ids = this.runtime.targets[0].variables;
     Object.keys(ids).forEach(function (key){
       idlist.push(variables[key].id);
     }
   );
-    var nameresult = valiableslist.indexOf(args.test2)
-     const selectlist = idlist.splice(args.nameresult)
-     var keyName = 'name'
-     var user = { 'name':selectlist[0]}
-     var userName = user[keyName]
-     console.log(userName)
-      //console.log(nameresult);
+     var nameresult = valiableslist.indexOf(args.test2)
+     var selectlist = idlist.splice(args.nameresult)
+     var resultName2 = this.runtime.targets[0].variables[selectlist[nameresult]]
+     var resultName3 = this.runtime.targets[0].variables[selectlist[nameresult]].value
       //console.log(idlist);
-     console.log(selectlist[0])
-     //console.log(args.test2)
-     console.log(this.runtime.targets[0].variable.(userName););
+     console.log(resultName2)
+     return nameresult
+     return selectlist
     }
     randfruit (){
       const fruits = ["パイナップル","バナナ","イチゴ","リンゴ","サクランボ","ブドウ","スイカ","みかん"];
