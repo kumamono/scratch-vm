@@ -4,6 +4,9 @@ const Cast = require('../../util/cast');
 const VariableUtil = require('../../util/variable-util')
 const log = require('../../util/log');
 const Variable = require('../../engine/variable')
+var valutype = [];
+var valunakami = [];
+var listnakami = [];
 var valiableslist = [];
 var idlist = [];
 var selectlist = [];
@@ -36,21 +39,34 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
                 {
                     opcode: 'writeLog',//保存時にjsonに書き込まれる:既存のものと被らなければ基本的にok
                     blockType: BlockType.COMMAND,//ぶろっくのタイプ（詳しくは公式参照）ブロックの形とかを定義するこれはスタックブロックと呼ばれ上下につながる
-                    //blockType: BlockType.BOOLEAN,   //条件：状態を意味する六角形のやつ
+                  //  //blockType: BlockType.BOOLEAN,   //条件：状態を意味する六角形のやつ
                     //blockType: BlockType.HAT,     //上に何も置けない開始のブロック
                     //blockType: BlockType.LOOP,   //C型ブロック　繰り返しなど中に何かを入れて動かす
                     //blockType: BlockType.REPORTER,   // 値を保持するブロック（中に変数として数字や文字列が入る）
-                    text: '変数を弄る',// ブロックの名前。[と]の間に英数字を入れると引数になる。って書いたあったけどよくわからんので聞いてみ
-                      },
-              //..  {
-              //      opcode: 'Looptext',
-              //      blockType: BlockType.LOOP,
-              //        text: '処理する',
-              //  },
+                    text: 'リスト:[test2]に中身を代入する',// ブロックの名前。[と]の間に英数字を入れると引数になる。って書いたあったけどよくわからんので聞いてみ
+                    arguments: {
+                      test2:{
+                        type: ArgumentType.STRING,
+                        menu: 'dMenu',
+                  //    },
+                }
+              }
+            },
+              　 {
+                    opcode: 'Looptext',
+                    blockType: BlockType.COMMAND,
+                      text: '[TEXT]',
+                      arguments: {
+                        TEXT: {
+                            type: ArgumentType.STRING,
+                            defaultValue: "    ",
+                        }
+                    }
+                },
                 {
                     opcode: 'writelist',
                     blockType: BlockType.COMMAND,
-                    text: 'リスト：[test2]を出力する',
+                    text: '[test2]に中身を代入する',
                     arguments: {
                       test2:{
                         type: ArgumentType.STRING,
@@ -93,10 +109,30 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
      * @param {object} args - the block arguments.
      * @property {number} TEXT - the text.
      */
-    writeLog () {　　　//オペコードはオペレーションコードで命令　argsは引数　上で定義してる変数の中身をもってこれる
+    writeLog (args) {　　　//オペコードはオペレーションコードで命令　argsは引数　上で定義してる変数の中身をもってこれる
       　　                 //引数　tostringは文字列にtoNumberは数値に
-      this.runtime.targets[0].variables[selectlist[nameresult]].value = 3;
-
+      valutype = "value"
+      var valiableslist = [];
+      var variables = this.runtime.targets[0].variables;
+      Object.keys(variables).forEach(function (key){
+        valiableslist.push(variables[key].name);
+      }
+    );
+    var idlist = [];
+    var ids = this.runtime.targets[0].variables;
+    Object.keys(ids).forEach(function (key){
+      idlist.push(variables[key].id);
+    }
+  );
+     nameresult = valiableslist.indexOf(args.test2)
+     selectlist = idlist.splice(args.nameresult)
+     var resultName2 = this.runtime.targets[0].variables[selectlist[nameresult]]
+     var resultName3 = this.runtime.targets[0].variables[selectlist[nameresult]].value;
+      //console.log(idlist);
+     console.log(resultName2)
+     console.log(resultName3)
+     return nameresult
+     return selectlist
     }
 
     /**
@@ -110,6 +146,7 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
         //return text;　//true false で真偽を返す
     }
     writelist(args){
+      valutype = "value"
       var valiableslist = [];
       var variables = this.runtime.targets[0].variables;
       Object.keys(variables).forEach(function (key){
@@ -140,10 +177,22 @@ class Scratch3NewBlocks {　　//とりあえず初期化してる
     randfruit2vaule (){
         return fruit;
     }
-    Looptext (){
-        console.log(this.runtime.targets[0].variables);
-        //console.log(this.runtime.targets[0].variables[`jEk@4|i[#Fk?(8x)AV.-my variable`].name =  );
-    }
+    Looptext (args){
+      var ifubunki = "list"
+      if (ifubunki == "value") {
+        valunakami = Cast.toString(args.TEXT)
+        this.runtime.targets[0].variables[selectlist[nameresult]][valutype] = valunakami
+      }
+        else if (ifubunki == "list") {
+        valunakami.push(args.TEXT)
+        this.runtime.targets[0].variables[selectlist[nameresult]][valutype] = valunakami
+  }
+  else {
+ x = 1
+ }
+ return valunakami
+}
+
     /**[    *menulistvaliables () {
     *  const valiableslist = [];
     *  const variables = this.runtime.targets[0].variables;
