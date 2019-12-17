@@ -16,6 +16,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
         this.runtime = runtime; // ランタイム初期化
         this.variables = new Object();
         this.variablesNameList = new Array();
+        this.evalvalue = 1;
     }
 
     /**
@@ -71,6 +72,22 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                     opcode: 'randfruit',
                     blockType: BlockType.REPORTER,
                     text: 'ランダムな果物'
+                },
+                {
+                    opcode: 'evalution2valu',
+                    blockType: BlockType.COMMAND,
+                    text: '[eval]',
+                    arguments: {
+                        eval: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: '1'
+                        }
+                    }
+                },
+                {
+                    opcode: 'evalution2show',
+                    blockType: BlockType.COMMAND,
+                    text: '評価を表示する'
                 }
             ],
             menus: {
@@ -129,7 +146,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      */
     writelist (args) {
         console.log(this.getValue(args.test2));
-        this.setValue((args.test2), (this.in2value(args.TEXT)));
+        //this.setValue((args.test2), (this.in2value(args.TEXT)));
     }
 
     /**
@@ -159,8 +176,8 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      */
 
     in2value (args) {
-        console.log(args.TEXT)
-        return (args.TEXT);
+        console.log(1);
+        //return (args.TEXT);
     }
 
     /**[    *menulistvaliables () {
@@ -177,6 +194,12 @@ class Scratch3NewBlocks { // とりあえず初期化してる
     menulistvaliables() {
         this.updateVariablesInfo();
         return this.variablesNameList;
+    }
+    evalution2valu (args){
+        this.evalvalue = Number(this.evalvalue) + Number(args.eval);
+    }
+    evalution2show (){
+        console.log(this.evalvalue);
     }
 
     /**
