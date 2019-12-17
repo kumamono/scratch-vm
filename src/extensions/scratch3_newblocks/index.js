@@ -12,8 +12,6 @@ const menuIconURI = 'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHdpZHRoP
 
 // class指定（ちょっとわからないから聞いてみる）
 class Scratch3NewBlocks { // とりあえず初期化してる
-
-
     constructor(runtime) { // ここからここまであったほうが良い
         this.runtime = runtime; // ランタイム初期化
         this.variables = new Object();
@@ -31,7 +29,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
             blockIconURI: blockIconURI, // 上で定義したアイコンを呼び出す
             blocks: [
                 {
-                    opcode: 'writeLog', // 保存時にjsonに書き込まれる:既存のものと被らなければ基本的にok
+                    opcode: 'writevaliavle', // 保存時にjsonに書き込まれる:既存のものと被らなければ基本的にok
                     blockType: BlockType.LOOP, // ぶろっくのタイプ（詳しくは公式参照）ブロックの形とかを定義するこれはスタックブロックと呼ばれ上下につながる
                     /*
                     blockType: BlockType.BOOLEAN,   //条件：状態を意味する六角形のやつ
@@ -48,7 +46,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                     }
                 },
                 {
-                    opcode: 'Looptext',
+                    opcode: 'in2value',
                     blockType: BlockType.COMMAND,
                     text: '[TEXT]',
                     arguments: {
@@ -109,27 +107,8 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * @property {number} TEXT - the text.
      */
 
-    writeLog(args) { // オペコードはオペレーションコードで命令 argsは引数上で定義してる変数の中身をもってこれる
-        // 引数 tostringは文字列にtoNumberは数値に
-        var valiableslist = [];
-        var variables = this.runtime.targets[0].variables;
-        Object.keys(variables).forEach(function(key) {
-            valiableslist.push(variables[key].name);
-        });
-        var idlist = [];
-        var ids = this.runtime.targets[0].variables;
-        Object.keys(ids).forEach(function(key) {
-            idlist.push(variables[key].id);
-        });
-        nameresult = valiableslist.indexOf(args.test2)
-        selectlist = idlist.splice(args.nameresult)
-        var resultName2 = this.runtime.targets[0].variables[selectlist[nameresult]]
-        var resultName3 = this.runtime.targets[0].variables[selectlist[nameresult]].value;
-        //console.log(idlist);
-        console.log(resultName2)
-        console.log(resultName3)
-        return nameresult
-        return selectlist
+    writevaliavle (args){ // オペコードはオペレーションコードで命令 argsは引数上で定義してる変数の中身をもってこれる
+        console.log(this.getValue(args.test2));
     }
 
     /**
@@ -148,27 +127,9 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * {戻り値}
      * @return {number} - the user agent.
      */
-    writelist(args) {
-        let valutype = "value"
-        var valiableslist = [];
-        var variables = this.runtime.targets[0].variables;
-        Object.keys(variables).forEach(function(key) {
-            valiableslist.push(variables[key].name);
-        });
-        var idlist = [];
-        var ids = this.runtime.targets[0].variables;
-        Object.keys(ids).forEach(function(key) {
-            idlist.push(variables[key].id);
-        });
-        nameresult = valiableslist.indexOf(args.test2)
-        selectlist = idlist.splice(args.nameresult)
-        var resultName2 = this.runtime.targets[0].variables[selectlist[nameresult]]
-        var resultName3 = this.runtime.targets[0].variables[selectlist[nameresult]].value;
-        //console.log(idlist);
-        console.log(resultName2)
-        console.log(resultName3)
-        return nameresult
-        return selectlist
+    writelist (args) {
+        console.log(this.getValue(args.test2));
+        this.setValue((args.test2), (this.in2value(args.TEXT)));
     }
 
     /**
@@ -197,18 +158,9 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * @return {number} - the user agent.
      */
 
-    Looptext(args) {
-        let ifubunki = "list"
-        if (ifubunki == "value") {
-            valunakami = Cast.toString(args.TEXT)
-            this.runtime.targets[0].variables[selectlist[nameresult]][valutype] = valunakami
-        } else if (ifubunki == "list") {
-            valunakami.push(args.TEXT)
-            this.runtime.targets[0].variables[selectlist[nameresult]][valutype] = valunakami
-        } else {
-            ;
-        }
-        return valunakami
+    in2value (args) {
+        console.log(args.TEXT)
+        return (args.TEXT);
     }
 
     /**[    *menulistvaliables () {
@@ -231,7 +183,6 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * update valiables infomation
      */
     updateVariablesInfo() {
-
         // 変数リストを初期化
         this.variables = new Object();
         this.variablesNameList = new Array();
@@ -247,8 +198,6 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                 this.variables[val.name] = val.id; // 名前をキーとするObjectの値にidを追加
             }
         }
-        console.log(this.variables);
-        console.log(this.variablesNameList);
     }
 }
 
