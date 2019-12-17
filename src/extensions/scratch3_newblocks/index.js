@@ -22,7 +22,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
     /**
      * @returns {object} metadata for this extension and its blocks.
      */
-    getInfo() {
+    getInfo () {
         return {
             id: 'newblocks', // guiで設定するextention id
             name: 'New Blocks', // 拡張機能の名前（自由命名）
@@ -38,11 +38,15 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                     blockType: BlockType.LOOP,   //C型ブロック繰り返しなど中に何かを入れて動かす
                     blockType: BlockType.REPORTER,   // 値を保持するブロック（中に変数として数字や文字列が入る）
                     */
+                    branchCount: 1,
                     text: 'リスト:[test2]に中身を代入する', // ブロックの名前。[と]の間に英数字を入れると引数になる。って書いたあったけどよくわからんので聞いてみ
                     arguments: {
                         test2: {
                             type: ArgumentType.STRING,
                             menu: 'dMenu'
+                        },
+                        SUBSTACK: {
+                            type: ArgumentType.BLOCK
                         }
                     }
                 },
@@ -53,18 +57,17 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
-                            defaultValue: "ことば",
+                            defaultValue: 'ことば'
                         }
                     }
                 },
                 {
-                    opcode: 'writelist',
+                    opcode: 'writeLog',
                     blockType: BlockType.LOOP,
-                    text: '変数:[test2]に中身を代入する',
+                    text: '[loopval]回繰り返す',
                     arguments: {
-                        test2: {
-                            type: ArgumentType.STRING,
-                            menu: 'dMenu'
+                        loopval: {
+                            type: ArgumentType.NUMBER
                         }
                     }
                 },
@@ -101,7 +104,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * @param {string} name - the name of target variable.
      * @return {string} a value of the variable.
      */
-    getValue(name) {
+    getValue (name) {
         let vals = this.runtime.targets[0].variables;
         return vals[this.variables[name]].value;
     }
@@ -112,11 +115,20 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * @params {string} value - 代入する値
      * example: this.setValue("hoge",[1,2,3,4])
      */
-    setValue(name,value) {
+
+    setValue (name, value) {
         let vals = this.runtime.targets[0].variables;
         let valiableId = this.variables[name];
         vals[valiableId].value = value;
     }
+
+    writeLog (args,loop,lop) {//オペコードはオペレーションコードで命令　argsは引数　上で定義してる変数の中身をもってこれる
+  　                 //引数　tostringは文字列にtoNumberは数値に
+    // console.log(this.runtime);
+     console.log(loop);
+     loop.sequencer.stepToBranch(loop.thread);
+}
+
 
     /**
      * Write log.
@@ -126,17 +138,21 @@ class Scratch3NewBlocks { // とりあえず初期化してる
 
     writevaliavle (args){ // オペコードはオペレーションコードで命令 argsは引数上で定義してる変数の中身をもってこれる
         console.log(this.getValue(args.test2));
+        this.next = true;
     }
 
     /**
      * Get the browser.
      * @return {number} - the user agent.
      */
-    getBrowser(args) {
-        //const text = Cast.toNumber(1);
-        ///let　定数
-        ///const 変数
-        //return text;　//true false で真偽を返す
+
+    getBrowser (args) {
+
+        //   const text = Cast.toNumber(1);
+        // let 定数
+        // const 変数
+        // return text; true false で真偽を返す
+
     }
 
     /**
@@ -144,18 +160,22 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * {戻り値}
      * @return {number} - the user agent.
      */
+
     writelist (args) {
         console.log(this.getValue(args.test2));
-        //this.setValue((args.test2), (this.in2value(args.TEXT)));
+        // this.setValue((args.test2), (this.in2value(args.TEXT)));
     }
+    loop () {
+    }
+
 
     /**
      * {説明}
      * {戻り値}
      * @return {number} - the user agent.
      */
-    randfruit() {
-        const fruits = ["パイナップル", "バナナ", "イチゴ", "リンゴ", "サクランボ", "ブドウ", "スイカ", "みかん"];
+    randfruit () {
+        const fruits = ['パイナップル', 'バナナ', 'イチゴ', 'リンゴ', 'サクランボ', 'ブドウ', 'スイカ', 'みかん'];
         const fruit = fruits[Math.floor(Math.random() * fruits.length)];
         return fruit;
     }
@@ -165,7 +185,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * {戻り値}
      * @return {number} - the user agent.
      */
-    randfruit2vaule() {
+    randfruit2vaule (){
         return fruit;
     }
 
@@ -175,12 +195,12 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * @return {number} - the user agent.
      */
 
-    in2value (args) {
+    in2value (args){
         console.log(1);
-        //return (args.TEXT);
+        // return (args.TEXT);
     }
 
-    /**[    *menulistvaliables () {
+    /** [    *menulistvaliables () {
      *  const valiableslist = [];
      *  const variables = this.runtime.targets[0].variables;
      *  Object.keys(variables).forEach(function (key){
@@ -191,7 +211,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      *  return valiableslist;
      *}
      */
-    menulistvaliables() {
+    menulistvaliables () {
         this.updateVariablesInfo();
         return this.variablesNameList;
     }
@@ -205,14 +225,14 @@ class Scratch3NewBlocks { // とりあえず初期化してる
     /**
      * update valiables infomation
      */
-    updateVariablesInfo() {
+    updateVariablesInfo () {
         // 変数リストを初期化
         this.variables = new Object();
         this.variablesNameList = new Array();
 
         // スプライトの一覧を取得
         let targets = this.runtime.targets;
-        //変数の一覧を作る
+        // 変数の一覧を作る
         for (let target_index of Object.keys(targets)) {
             let target = targets[target_index];
             for (val_index of Object.keys(target.variables)) {
