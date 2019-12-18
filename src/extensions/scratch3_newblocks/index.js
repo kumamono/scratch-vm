@@ -17,12 +17,14 @@ class Scratch3NewBlocks { // とりあえず初期化してる
         this.variables = new Object();
         this.variablesNameList = new Array();
         this.evalvalue = 1;
+        this.idval = 1;
+        this.lists = [];
     }
 
     /**
      * @returns {object} metadata for this extension and its blocks.
      */
-    getInfo () {
+    getInfo() {
         return {
             id: 'newblocks', // guiで設定するextention id
             name: 'New Blocks', // 拡張機能の名前（自由命名）
@@ -44,9 +46,6 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                         test2: {
                             type: ArgumentType.STRING,
                             menu: 'dMenu'
-                        },
-                        SUBSTACK: {
-                            type: ArgumentType.BLOCK
                         }
                     }
                 },
@@ -77,6 +76,11 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                     text: 'ランダムな果物'
                 },
                 {
+                    opcode: 'thislist',
+                    blockType: BlockType.COMMAND,
+                    text: 'リスト全パターン'
+                },
+                {
                     opcode: 'evalution2valu',
                     blockType: BlockType.COMMAND,
                     text: '[eval]',
@@ -104,7 +108,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * @param {string} name - the name of target variable.
      * @return {string} a value of the variable.
      */
-    getValue (name) {
+    getValue(name) {
         let vals = this.runtime.targets[0].variables;
         return vals[this.variables[name]].value;
     }
@@ -116,18 +120,18 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * example: this.setValue("hoge",[1,2,3,4])
      */
 
-    setValue (name, value) {
+    setValue(name, value) {
         let vals = this.runtime.targets[0].variables;
         let valiableId = this.variables[name];
         vals[valiableId].value = value;
     }
 
-    writeLog (args,loop,lop) {//オペコードはオペレーションコードで命令　argsは引数　上で定義してる変数の中身をもってこれる
-  　                 //引数　tostringは文字列にtoNumberは数値に
-    // console.log(this.runtime);
-     console.log(loop);
-     loop.sequencer.stepToBranch(loop.thread);
-}
+    writeLog(args, loop, lop) { //オペコードはオペレーションコードで命令　argsは引数　上で定義してる変数の中身をもってこれる
+        //引数　tostringは文字列にtoNumberは数値に
+        // console.log(this.runtime);
+        loop.sequencer.stepToBranch(loop.thread);
+        console.log(loop);
+    }
 
 
     /**
@@ -136,23 +140,9 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * @property {number} TEXT - the text.
      */
 
-    writevaliavle (args){ // オペコードはオペレーションコードで命令 argsは引数上で定義してる変数の中身をもってこれる
-        console.log(this.getValue(args.test2));
-        this.next = true;
-    }
-
-    /**
-     * Get the browser.
-     * @return {number} - the user agent.
-     */
-
-    getBrowser (args) {
-
-        //   const text = Cast.toNumber(1);
-        // let 定数
-        // const 変数
-        // return text; true false で真偽を返す
-
+    writevaliavle(args, loop, lop) { // オペコードはオペレーションコードで命令 argsは引数上で定義してる変数の中身をもってこれる
+        this.idval = (args.test2);
+        loop.sequencer.stepToBranch(loop.thread);
     }
 
     /**
@@ -161,12 +151,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * @return {number} - the user agent.
      */
 
-    writelist (args) {
-        console.log(this.getValue(args.test2));
-        // this.setValue((args.test2), (this.in2value(args.TEXT)));
-    }
-    loop () {
-    }
+    loop() {}
 
 
     /**
@@ -174,7 +159,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * {戻り値}
      * @return {number} - the user agent.
      */
-    randfruit () {
+    randfruit() {
         const fruits = ['パイナップル', 'バナナ', 'イチゴ', 'リンゴ', 'サクランボ', 'ブドウ', 'スイカ', 'みかん'];
         const fruit = fruits[Math.floor(Math.random() * fruits.length)];
         return fruit;
@@ -185,7 +170,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * {戻り値}
      * @return {number} - the user agent.
      */
-    randfruit2vaule (){
+    randfruit2vaule() {
         return fruit;
     }
 
@@ -195,8 +180,11 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * @return {number} - the user agent.
      */
 
-    in2value (args){
-        console.log(1);
+    in2value(args) {
+        if (this.idval !== 1) {
+            this.setValue(this.idval, (args.TEXT));
+            this.idval = 1;
+        }
         // return (args.TEXT);
     }
 
@@ -211,21 +199,21 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      *  return valiableslist;
      *}
      */
-    menulistvaliables () {
+    menulistvaliables() {
         this.updateVariablesInfo();
         return this.variablesNameList;
     }
-    evalution2valu (args){
+    evalution2valu(args) {
         this.evalvalue = Number(this.evalvalue) + Number(args.eval);
     }
-    evalution2show (){
+    evalution2show() {
         console.log(this.evalvalue);
     }
 
     /**
      * update valiables infomation
      */
-    updateVariablesInfo () {
+    updateVariablesInfo() {
         // 変数リストを初期化
         this.variables = new Object();
         this.variablesNameList = new Array();
@@ -241,6 +229,36 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                 this.variables[val.name] = val.id; // 名前をキーとするObjectの値にidを追加
             }
         }
+    }
+    // https://qiita.com/higuma/items/5af4e62bdf4df42ce673
+
+
+    thislist () {
+        var generatePermutation = function(perm, pre, post, n) {
+            var elem, i, rest, len;
+            if (n > 0)
+                for (i = 0, len = post.length; i < len; ++i) {
+                    rest = post.slice(0);
+                    elem = rest.splice(i, 1);
+                    generatePermutation(perm, pre.concat(elem), rest, n - 1);
+                }
+            else
+                perm.push(pre);
+        };
+
+        /*
+        extend Array.prototype
+        e.g. [0, 1, 2].permutation(2)
+        => [[0, 1], [0, 2], [1, 0], [1, 2], [2, 0], [2, 1]]
+        */
+        Array.prototype.permutation = function(n) {
+            if (n == null) n = this.length;
+            var perm = [];
+            generatePermutation(perm, [], this, n);
+            return perm;
+        };
+        this.list = ['父', 'と', '私'].permutation();
+        console.log(this.list);
     }
 }
 
