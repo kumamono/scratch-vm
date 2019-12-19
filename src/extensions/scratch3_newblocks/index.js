@@ -76,9 +76,23 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                     text: 'ランダムな果物'
                 },
                 {
-                    opcode: 'thislist',
+                    opcode: 'listtest',
                     blockType: BlockType.COMMAND,
-                    text: 'リスト全パターン'
+                    text: 'ここまでで全パターンのリストを作る',
+                    arguments: {
+                        TEXT1: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'ことば'
+                        },
+                        TEXT2: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'わ'
+                        },
+                        TEXT3: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'か'
+                        }
+                   }
                 },
                 {
                     opcode: 'evalution2valu',
@@ -230,6 +244,12 @@ class Scratch3NewBlocks { // とりあえず初期化してる
             }
         }
     }
+    listtest (args){
+        console.log(args.TEXT1);
+        console.log(args.TEXT2);
+        console.log(args.TEXT3);
+    }
+
     // https://qiita.com/higuma/items/5af4e62bdf4df42ce673
 
 
