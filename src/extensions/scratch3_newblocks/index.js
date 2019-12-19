@@ -17,8 +17,9 @@ class Scratch3NewBlocks { // とりあえず初期化してる
         this.variables = new Object();
         this.variablesNameList = new Array();
         this.evalvalue = 1;
-        this.idval = 1;
+        this.idval = null; //
         this.lists = [];
+        this.loopFlag4Writevaliavle = true; //
     }
 
     /**
@@ -137,7 +138,12 @@ class Scratch3NewBlocks { // とりあえず初期化してる
     setValue(name, value) {
         let vals = this.runtime.targets[0].variables;
         let valiableId = this.variables[name];
-        vals[valiableId].value = value;
+        if (vals[valiableId].type == 'list') {
+            vals[valiableId].value.push(value);
+        }else{
+            vals[valiableId].value = value;
+        }
+        this.runtime
     }
 
     writeLog(args, loop, lop) { //オペコードはオペレーションコードで命令　argsは引数　上で定義してる変数の中身をもってこれる
@@ -149,14 +155,22 @@ class Scratch3NewBlocks { // とりあえず初期化してる
 
 
     /**
-     * Write log.
+     * C型ブロック idvalに変数名を入れC型の中が終わったらnullにする
      * @param {object} args - the block arguments.
      * @property {number} TEXT - the text.
      */
 
-    writevaliavle(args, loop, lop) { // オペコードはオペレーションコードで命令 argsは引数上で定義してる変数の中身をもってこれる
-        this.idval = (args.test2);
-        loop.sequencer.stepToBranch(loop.thread);
+    writevaliavle (args, loop, lop) { // オペコードはオペレーションコードで命令 argsは引数上で定義してる変数の中身をもってこれる
+        this.idval = args.test2;
+        let brachToJump = 1;
+
+        if(this.loopFlag4Writevaliavle){
+            loop.sequencer.stepToBranch(loop.thread,brachToJump,this.loopFlag4Writevaliavle);
+        }else{
+            this.idval = null;
+        }
+        this.loopFlag4Writevaliavle = !this.loopFlag4Writevaliavle;
+
     }
 
     /**
@@ -195,11 +209,12 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      */
 
     in2value(args) {
-        if (this.idval !== 1) {
-            this.setValue(this.idval, (args.TEXT));
-            this.idval = 1;
-        }
-        // return (args.TEXT);
+        if (this.idval !== null) {
+            console.log(this.runtime.targets[0].variables[this.variables[this.idval]].type);
+            console.log(this.runtime.targets[0].variables[this.variables[this.idval]].value);
+            this.setValue(this.idval, args.TEXT);
+            console.log(this.runtime.targets[0].variables[this.variables[this.idval]].value);
+
     }
 
     /** [    *menulistvaliables () {
