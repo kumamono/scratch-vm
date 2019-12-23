@@ -18,12 +18,13 @@ const menuIconURI = 'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHdpZHRoP
 class Scratch3NewBlocks { // とりあえず初期化してる
     constructor(runtime) { // ここからここまであったほうが良い
         this.runtime = runtime; // ランタイム初期化
-        this.variables = new Object();
-        this.variablesNameList = new Array();
         this.evalvalue = 1;
-        this.idval = null; //
+        this.listName4setItems = null;  //writevaliavle関数内でアイテムを追加するリスト
+        this.listName4makePattern = null;  //writevaliavle関数内でアイテムを追加するリスト
+        this.list4generate = new Array();
         this.lists = [];
         this.loopFlag4Writevaliavle = true; //
+        this.loopFlag4MakePattern = true; //
         this.datablock = new Scratch3DataBlocks(this.runtime);
     }
 
@@ -39,7 +40,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
             blocks: [
                 {
                     opcode: 'writevaliavle', // 保存時にjsonに書き込まれる:既存のものと被らなければ基本的にok
-                    blockType: BlockType.LOOP, // ぶろっくのタイプ（詳しくは公式参照）ブロックの形とかを定義するこれはスタックブロックと呼ばれ上下につながる
+                    blockType: BlockType.CONDITIONAL, // ぶろっくのタイプ（詳しくは公式参照）ブロックの形とかを定義するこれはスタックブロックと呼ばれ上下につながる
                     /*
                     blockType: BlockType.BOOLEAN,   //条件：状態を意味する六角形のやつ
                     blockType: BlockType.HAT,     //上に何も置けない開始のブロック
@@ -47,22 +48,51 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                     blockType: BlockType.REPORTER,   // 値を保持するブロック（中に変数として数字や文字列が入る）
                     */
                     branchCount: 1,
-                    text: 'リスト:[test2]に中身を代入する', // ブロックの名前。[と]の間に英数字を入れると引数になる。って書いたあったけどよくわからんので聞いてみ
+                    text: '[TARGET]に単語を追加する', // ブロックの名前。[と]の間に英数字を入れると引数になる。って書いたあったけどよくわからんので聞いてみ
                     arguments: {
-                        test2: {
+                        TARGET: {
                             type: ArgumentType.STRING,
-                            menu: 'dMenu'
+                            menu: 'listMenu'
                         }
                     }
                 },
                 {
-                    opcode: 'in2value',
+                    opcode: 'addValue2List',
                     blockType: BlockType.COMMAND,
-                    text: '[TEXT]',
+                    text: '[TEXT]を追加',
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
                             defaultValue: 'ことば'
+                        }
+                    }
+                },
+                {
+                    opcode: 'makePattern', // 保存時にjsonに書き込まれる:既存のものと被らなければ基本的にok
+                    blockType: BlockType.CONDITIONAL, // ぶろっくのタイプ（詳しくは公式参照）ブロックの形とかを定義するこれはスタックブロックと呼ばれ上下につながる
+                    /*
+                    blockType: BlockType.BOOLEAN,   //条件：状態を意味する六角形のやつ
+                    blockType: BlockType.HAT,     //上に何も置けない開始のブロック
+                    blockType: BlockType.LOOP,   //C型ブロック繰り返しなど中に何かを入れて動かす
+                    blockType: BlockType.REPORTER,   // 値を保持するブロック（中に変数として数字や文字列が入る）
+                    */
+                    branchCount: 1,
+                    text: '[TARGET]をパターンリストにする', // ブロックの名前。[と]の間に英数字を入れると引数になる。って書いたあったけどよくわからんので聞いてみ
+                    arguments: {
+                        TARGET: {
+                            type: ArgumentType.STRING,
+                            menu: 'listMenu'
+                        }
+                    }
+                },
+                {
+                    opcode: 'nominateItem',
+                    blockType: BlockType.COMMAND,
+                    text: '[TARGET]をパターンに追加',
+                    arguments: {
+                        TARGET: {
+                            type: ArgumentType.STRING,
+                            menu: 'listMenu'
                         }
                     }
                 },
@@ -89,7 +119,12 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                 }
             ],
             menus: {
-                dMenu: 'menulistvaliables'
+                listMenu: {
+                    items: 'makeListsMenu',
+                },
+                variableMenu :{
+                    items:'makeVariablesMenu'
+                }
             }
         };
     }
@@ -97,23 +132,27 @@ class Scratch3NewBlocks { // とりあえず初期化してる
     /**
      * Return a value of variable.
      * @param {string} name - the name of target variable.
+     * @param {string} type - the type of target variable. ex : Variable.LIST_TYPE, Variable.SCALAR_TYPE
      * @return {string} a value of the variable.
      */
-    getValue(name) {
-        let vals = this.runtime.targets[0].variables;
-        return vals[this.variables[name]].value;
+    getValue(name,type) {
+        const variable = util.target.lookupVariableByNameAndType(name, type);
+        return variable.value;
     }
 
     /**
      * Set a value to variable.
      * @params {string} name - the name of target variable.
-     * @params {string} value - 代入する値
-     * example: this.setValue("hoge",[1,2,3,4])
+     * @params {string} type - type of variable.
+     * @params {string} value - value to set variable.
+     * @params {!BlockUtility} util - utilities of block.
      */
 
-    setValue(name, value, util) {
-        const variable = util.target.lookupOrCreateVariable(this.variables[name], name);
-        if(variable.type == "list"){
+    setValue(name, type, value, util) {
+        const variable = util.target.lookupVariableByNameAndType(this.listName4setItems, type);
+        console.log(variable)
+
+        if(variable.type == Variable.LIST_TYPE){
             if (variable.value.length < Scratch3DataBlocks.LIST_ITEM_LIMIT) {
                 variable.value.push(value);
             }
@@ -125,32 +164,24 @@ class Scratch3NewBlocks { // とりあえず初期化してる
     }
 
     /**
-     * C型ブロック idvalに変数名を入れC型の中が終わったらnullにする
+     * C型ブロック this.listName4setItemsを対象のリストとして内部ブランチを処理する
      * @param {object} args - the block arguments.
-     * @property {number} TEXT - the text.
+     * @property {number} TARGET - the name of target list.
      */
 
-    writevaliavle (args, loop, lop) { // オペコードはオペレーションコードで命令 argsは引数上で定義してる変数の中身をもってこれる
-        this.idval = args.test2;
+    writevaliavle (args, util, info) { // オペコードはオペレーションコードで命令 argsは引数上で定義してる変数の中身をもってこれる
+        console.log(args)
+        this.listName4setItems = args.TARGET;
         let brachToJump = 1;
 
         if(this.loopFlag4Writevaliavle){
-            loop.sequencer.stepToBranch(loop.thread,brachToJump,this.loopFlag4Writevaliavle);
+            util.startBranch(brachToJump,this.loopFlag4Writevaliavle);
         }else{
-            this.idval = null;
+            this.listName4setItems = null;
         }
         this.loopFlag4Writevaliavle = !this.loopFlag4Writevaliavle;
 
     }
-
-    /**
-     * {説明}
-     * {戻り値}
-     * @return {number} - the user agent.
-     */
-
-    loop() {}
-
 
     /**
      * {説明}
@@ -178,40 +209,126 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      * @return {number} - the user agent.
      */
 
-    in2value(args,perikan,kawauso) {
-        if (this.idval !== null) {
-            console.log(this.runtime.targets[0].variables[this.variables[this.idval]].type);
-            console.log(this.runtime.targets[0].variables[this.variables[this.idval]].value);
-            this.setValue(this.idval, args.TEXT, perikan);
-            console.log(this.runtime.targets[0].variables[this.variables[this.idval]].value);
-
+    addValue2List(args,perikan,kawauso) {
+        console.log(args,perikan.arguments,kawauso);
+        if (this.listName4setItems !== null) {
+            this.setValue(this.listName4setItems, Variable.LIST_TYPE, args.TEXT, perikan);
         }
-        /*
-        console.log(perikan, kawauso);
-        let id = uid();
-        console.log(this.runtime.targets);
-        /*
-        this.runtime.createNewGlobalVariable('saiama',uid(),Variable.LIST_TYPE);
-        this.runtime.requestBlocksUpdate();
-        this.runtime.requestRedraw();
-        */
        }
 
-    /** [    *menulistvaliables () {
-     *  const valiableslist = [];
-     *  const variables = this.runtime.targets[0].variables;
-     *  Object.keys(variables).forEach(function (key){
-     *    valiableslist.push(variables[key].name);
-     *  }
-     *);
-     *  console.log(valiableslist);
-     *  return valiableslist;
-     *}
+
+    /**
+     * return menu of list names.
+     * @return {Array} - names of lists.
      */
-    menulistvaliables() {
-        this.updateVariablesInfo();
-        return this.variablesNameList;
+    makePattern(args, util){
+        console.log(args)
+        this.listName4makePattern = args.TARGET;
+        const variable = util.target.lookupVariableByNameAndType(this.listName4makePattern, Variable.LIST_TYPE);
+        let brachToJump = 1;
+
+        if(this.loopFlag4MakePattern){
+            variable.value = new Array();
+            this.list4generate = new Array();
+            util.startBranch(brachToJump,this.loopFlag4MakePattern);
+        }else{
+            console.log(this.list4generate)
+
+            // ObjectをArray型にキャストするためのメソッド
+            Object.prototype._2array = function(){
+                if(Array.isArray(this.valueOf())){
+                    return this.valueOf()
+                }else{
+                    return [this.valueOf()]
+                }
+            }
+            //２次元配列を引数にとり、配列の全組み合わせを出力する
+            Array.prototype.getallcombinationarray = function(){
+                const _array = Object.assign([],this.valueOf())
+                const tmpCombinationArray = new Array()
+                if(_array.length >= 2){
+                    _array[0].forEach(element0 => {
+                        _array[1].forEach(element1 => {
+                            element0 = element0._2array()
+                            element1 = element1._2array()
+                            tmpCombinationArray.push(element0.concat(element1))
+                        })
+                    })
+                    _array.shift()
+                    _array.shift()
+                    _array.unshift(tmpCombinationArray)
+                    return _array.getallcombinationarray()
+                }else{
+                    return _array[0]
+                }
+            }
+
+            let temp = new Array();
+            this.list4generate.forEach(function(listName){
+                temp.push(util.target.lookupVariableByNameAndType(listName,Variable.LIST_TYPE).value);
+            });
+            temp = temp.getallcombinationarray();
+            console.log(temp);
+            if(this.list4generate.length >= 2){
+                temp.forEach(function(item){
+                    console.log(item);
+                    variable.value.push(item.join(' '));
+                });
+            }
+            variable._monitorUpToDate = false;
+            this.listName4makePattern = null;
+        }
+        this.loopFlag4MakePattern = !this.loopFlag4MakePattern;
+
     }
+
+    nominateItem(args,util,ob){
+        console.log(args,util,ob)
+        args._monitorUpToDate = false;
+        if(this.listName4makePattern != null){
+            this.list4generate.push(args.TARGET);
+        }
+        console.log(args.TARGET);
+
+    }
+
+    /**
+     * return menu of list names.
+     * @return {Array} - names of lists.
+     */
+    makeListsMenu() {
+        const type = Variable.LIST_TYPE;
+        let list = this.runtime.getTargetForStage().getAllVariableNamesInScopeByType(Variable.LIST_TYPE);
+        console.log(list)
+        if(list.length == 0){
+            return [""];
+        }
+        let obj_list = new Array();
+        for(let name of list){
+            /*
+            let variable = this.runtime.getTargetForStage().lookupVariableByNameAndType(name,Variable.LIST_TYPE);
+            variable.text = variable.name;
+            obj_list.push(variable);
+             */
+            obj_list.push(name)
+        }
+        console.log(obj_list)
+        return obj_list;
+    }
+
+    /**
+     * return menu of variable names.
+     * @return {Array} - names of variable.
+     */
+    makeVariablesMenu() {
+        const type = Variable.SCALAR_TYPE;
+        const list = this.runtime.getTargetForStage().getAllVariableNamesInScopeByType(Variable.SCALAR_TYPE);
+        if(list.length == 0){
+            list.push("変数なし");
+        }
+        return list;
+    }
+
     evalution2valu(args) {
         this.evalvalue = Number(this.evalvalue) + Number(args.eval);
     }
@@ -219,54 +336,11 @@ class Scratch3NewBlocks { // とりあえず初期化してる
         alert(this.evalvalue);
     }
 
-    /**
-     * update valiables infomation
-     */
-    updateVariablesInfo() {
-        // 変数リストを初期化
-        this.variables = new Object();
-        this.variablesNameList = new Array();
-
-        // スプライトの一覧を取得
-        let targets = this.runtime.targets;
-        // 変数の一覧を作る
-        for (let target_index of Object.keys(targets)) {
-            let target = targets[target_index];
-            for (val_index of Object.keys(target.variables)) {
-                let val = target.variables[val_index];
-                this.variablesNameList.push(val.name); // 名前一覧の配列に名前を追加
-                this.variables[val.name] = val.id; // 名前をキーとするObjectの値にidを追加
-            }
-        }
-    }
-
     // https://qiita.com/higuma/items/5af4e62bdf4df42ce673
 
 
     thislist () {
-        var generatePermutation = function(perm, pre, post, n) {
-            var elem, i, rest, len;
-            if (n > 0)
-                for (i = 0, len = post.length; i < len; ++i) {
-                    rest = post.slice(0);
-                    elem = rest.splice(i, 1);
-                    generatePermutation(perm, pre.concat(elem), rest, n - 1);
-                }
-            else
-                perm.push(pre);
-        };
 
-        /*
-        extend Array.prototype
-        e.g. [0, 1, 2].permutation(2)
-        => [[0, 1], [0, 2], [1, 0], [1, 2], [2, 0], [2, 1]]
-        */
-        Array.prototype.permutation = function(n) {
-            if (n == null) n = this.length;
-            var perm = [];
-            generatePermutation(perm, [], this, n);
-            return perm;
-        };
         this.list = ['父', 'と', '私'].permutation();
         console.log(this.list);
     }
