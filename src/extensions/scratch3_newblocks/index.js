@@ -6,6 +6,7 @@ const VariableUtil = require('../../util/variable-util');
 const log = require('../../util/log');
 const Variable = require('../../engine/variable');
 const Scratch3DataBlocks = require('../../blocks/scratch3_data');
+const Blocks = require('../../engine/blocks');
 // hash形式のブロックicon
 const blockIconURI = 'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48ZyBpZD0iSUQwLjA4NjgyNDQzOTAwMDMzODMyIiB0cmFuc2Zvcm09Im1hdHJpeCgwLjQ5MTU0NjY2MDY2MTY5NzQsIDAsIDAsIDAuNDkxNTQ2NjYwNjYxNjk3NCwgLTY0LjUsIC03Ny4yNSkiPjxwYXRoIGlkPSJJRDAuNTcyMTQ2MjMwMzc3MjU2OSIgZmlsbD0iI0ZGOTQwMCIgc3Ryb2tlPSJub25lIiBkPSJNIDE4OCAxNDEgTCAyNTAgMTQxIEwgMjUwIDIwMyBMIDE4OCAyMDMgTCAxODggMTQxIFogIiB0cmFuc2Zvcm09Im1hdHJpeCgxLjI4NzkwMzMwODg2ODQwODIsIDAsIDAsIDEuMjg3OTAzMzA4ODY4NDA4MiwgLTExMC45LCAtMjQuNCkiLz48cGF0aCBpZD0iSUQwLjYzODMzNjEzNTA3NDQ5NjMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIGQ9Ik0gMTk2IDIwNCBDIDE5NiAyMDQgMTkyLjcwNiAxOTAuMDU4IDE5MyAxODMgQyAxOTMuMDc0IDE4MS4yMzYgMTk1Ljg4NiAxNzguNDU4IDE5NyAxODAgQyAyMDEuNDU1IDE4Ni4xNjggMjAzLjQ0MyAyMDMuNzU0IDIwNiAyMDEgQyAyMDkuMjExIDE5Ny41NDIgMjEwIDE2NiAyMTAgMTY2ICIgdHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgMSwgLTU3LCAxNS44KSIvPjxwYXRoIGlkPSJJRDAuNzU4NzMwMzU2NTgxNTA5MSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgZD0iTSAyMTUgMTY5IEMgMjE1IDE2OSAyMTguMzY3IDE2OS41MzQgMjIwIDE3MCBDIDIyMC43MTYgMTcwLjIwNSAyMjEuMjc4IDE3MC44MTkgMjIyIDE3MSBDIDIyMi42NDYgMTcxLjE2MiAyMjMuMzY4IDE3MC43ODkgMjI0IDE3MSBDIDIyNC40NDcgMTcxLjE0OSAyMjUgMTcyIDIyNSAxNzIgIiB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCAtNTcsIDE1LjgpIi8+PHBhdGggaWQ9IklEMC4yNDM2NzMwNzMxMjc4NjU4IiBmaWxsPSJub25lIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBkPSJNIDIyNyAxNTQgQyAyMjcgMTU0IDIxOC41NTUgMTQ3Ljg5MCAyMTcgMTUxIEMgMjEyLjM0NSAxNjAuMzEwIDIxMS4yODkgMTcxLjczMyAyMTMgMTgyIEMgMjEzLjYxMiAxODUuNjcyIDIyMyAxODcgMjIzIDE4NyAiIHRyYW5zZm9ybT0ibWF0cml4KDEsIDAsIDAsIDEsIC01NywgMTUuOCkiLz48cGF0aCBpZD0iSUQwLjc5MzkzOTQ4MTk1NTAyMTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIGQ9Ik0gMTc1IDIwMC41MDAgQyAxNzUgMjAwLjUwMCAxNjkuODA1IDIyMS45MTMgMTcxIDIyMi43NTAgQyAxNzIuMTk1IDIyMy41ODcgMTc4Ljc5NSAyMDUuMjk1IDE4Mi41MDAgMjA1Ljc1MCBDIDE4NS45MjAgMjA2LjE3MCAxODEuODU5IDIyNC41MDAgMTg1LjI1MCAyMjQuNTAwIEMgMTg5LjIxMyAyMjQuNTAwIDE5Ny4yNTAgMjA1Ljc1MCAxOTcuMjUwIDIwNS43NTAgIi8+PC9nPjwvc3ZnPg==';
 
@@ -21,11 +22,33 @@ class Scratch3NewBlocks { // とりあえず初期化してる
         this.evalvalue = 1;
         this.listName4setItems = null;  //writevaliavle関数内でアイテムを追加するリスト
         this.listName4makePattern = null;  //writevaliavle関数内でアイテムを追加するリスト
+        this.listName4makeAllPattern = null;  //writevaliavle関数内でアイテムを追加するリスト
         this.list4generate = new Array();
+        this.list4allGenerate = new Array();
         this.lists = [];
         this.loopFlag4Writevaliavle = true; //
         this.loopFlag4MakePattern = true; //
-        this.datablock = new Scratch3DataBlocks(this.runtime);
+        this.loopFlag4MakeAllPattern = true; //
+        (function() {
+            var generatePermutation = function(perm, pre, post, n) {
+                var elem, i, rest, len;
+                if (n > 0)
+                    for (i = 0, len = post.length; i < len; ++i) {
+                        rest = post.slice(0);
+                        elem = rest.splice(i, 1);
+                        generatePermutation(perm, pre.concat(elem), rest, n - 1);
+                    }
+                else
+                    perm.push(pre);
+            };
+
+            Array.prototype.permutation = function(n) {
+                if (n == null) n = this.length;
+                var perm = [];
+                generatePermutation(perm, [], this, n);
+                return perm;
+            };
+        })();       this.datablock = new Scratch3DataBlocks(this.runtime);
     }
 
     /**
@@ -64,22 +87,28 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                         TEXT: {
                             type: ArgumentType.STRING,
                             defaultValue: 'ことば'
-                        }
+                        },
                     }
                 },
                 {
                     opcode: 'makePattern', // 保存時にjsonに書き込まれる:既存のものと被らなければ基本的にok
                     blockType: BlockType.CONDITIONAL, // ぶろっくのタイプ（詳しくは公式参照）ブロックの形とかを定義するこれはスタックブロックと呼ばれ上下につながる
-                    /*
-                    blockType: BlockType.BOOLEAN,   //条件：状態を意味する六角形のやつ
-                    blockType: BlockType.HAT,     //上に何も置けない開始のブロック
-                    blockType: BlockType.LOOP,   //C型ブロック繰り返しなど中に何かを入れて動かす
-                    blockType: BlockType.REPORTER,   // 値を保持するブロック（中に変数として数字や文字列が入る）
-                    */
                     branchCount: 1,
-                    text: '[TARGET]をパターンリストにする', // ブロックの名前。[と]の間に英数字を入れると引数になる。って書いたあったけどよくわからんので聞いてみ
+                    text: '[LIST]をパターンリストにする', // ブロックの名前。[と]の間に英数字を入れると引数になる。って書いたあったけどよくわからんので聞いてみ
                     arguments: {
-                        TARGET: {
+                        LIST: {
+                            type: ArgumentType.STRING,
+                            menu: 'listMenu'
+                        }
+                    }
+                },
+                {
+                    opcode: 'makeAllPattern', // 保存時にjsonに書き込まれる:既存のものと被らなければ基本的にok
+                    blockType: BlockType.CONDITIONAL, // ぶろっくのタイプ（詳しくは公式参照）ブロックの形とかを定義するこれはスタックブロックと呼ばれ上下につながる
+                    branchCount: 1,
+                    text: '[LIST]を全パターンリストにする', // ブロックの名前。[と]の間に英数字を入れると引数になる。って書いたあったけどよくわからんので聞いてみ
+                    arguments: {
+                        LIST: {
                             type: ArgumentType.STRING,
                             menu: 'listMenu'
                         }
@@ -88,12 +117,23 @@ class Scratch3NewBlocks { // とりあえず初期化してる
                 {
                     opcode: 'nominateItem',
                     blockType: BlockType.COMMAND,
-                    text: '[TARGET]をパターンに追加',
+                    text: '[LIST]をパターンに追加',
                     arguments: {
-                        TARGET: {
+                        LIST:{
                             type: ArgumentType.STRING,
                             menu: 'listMenu'
-                        }
+                        },
+                    }
+                },
+                {
+                    opcode: 'getListedItem',
+                    blockType: BlockType.REPORTER,
+                    text: '[LIST]の[ITEM]',
+                    arguments: {
+                        LIST:{
+                            type: ArgumentType.STRING,
+                            menu: 'listMenu'
+                        },
                     }
                 },
                 {
@@ -170,11 +210,11 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      */
 
     writevaliavle (args, util, info) { // オペコードはオペレーションコードで命令 argsは引数上で定義してる変数の中身をもってこれる
-        console.log(args)
         this.listName4setItems = args.TARGET;
         let brachToJump = 1;
 
         if(this.loopFlag4Writevaliavle){
+            console.log(args)
             util.startBranch(brachToJump,this.loopFlag4Writevaliavle);
         }else{
             this.listName4setItems = null;
@@ -214,64 +254,73 @@ class Scratch3NewBlocks { // とりあえず初期化してる
         if (this.listName4setItems !== null) {
             this.setValue(this.listName4setItems, Variable.LIST_TYPE, args.TEXT, perikan);
         }
-       }
+    }
 
+
+    /**
+     * 渡されたリストの順番を維持した全組み合わせリストを作る
+     * @return {Array} - names of lists.
+     */
+    generateCombinationAllay(targetArray,util){
+        console.log(targetArray)
+        // ObjectをArray型にキャストするためのメソッド
+        Object.prototype._2array = function(){
+            if(Array.isArray(this.valueOf())){
+                return this.valueOf()
+            }else{
+                return [this.valueOf()]
+            }
+        }
+        //２次元配列を引数にとり、配列の全組み合わせを出力する
+        Array.prototype.getallcombinationarray = function(){
+            const _array = Object.assign([],this.valueOf())
+            const tmpCombinationArray = new Array()
+            if(_array.length >= 2){
+                _array[0].forEach(element0 => {
+                    _array[1].forEach(element1 => {
+                        element0 = element0._2array()
+                        element1 = element1._2array()
+                        tmpCombinationArray.push(element0.concat(element1))
+                    })
+                })
+                _array.shift()
+                _array.shift()
+                _array.unshift(tmpCombinationArray)
+                return _array.getallcombinationarray()
+            }else{
+                return _array[0]
+            }
+        }
+
+        let temp = new Array();
+        targetArray.forEach(function(listName){
+            temp.push(util.target.lookupVariableById(listName).value);
+        });
+        temp = temp.getallcombinationarray();
+        return temp;
+    }
 
     /**
      * return menu of list names.
      * @return {Array} - names of lists.
      */
     makePattern(args, util){
-        console.log(args)
-        this.listName4makePattern = args.TARGET;
-        const variable = util.target.lookupVariableByNameAndType(this.listName4makePattern, Variable.LIST_TYPE);
+        this.listName4makePattern = args.LIST.id || args.LIST.name;
+        const variable = util.target.lookupVariableById(this.listName4makePattern);
         let brachToJump = 1;
+        if(!variable){
+            return;
+        }
 
         if(this.loopFlag4MakePattern){
+            console.log(args)
             variable.value = new Array();
             this.list4generate = new Array();
             util.startBranch(brachToJump,this.loopFlag4MakePattern);
         }else{
-            console.log(this.list4generate)
-
-            // ObjectをArray型にキャストするためのメソッド
-            Object.prototype._2array = function(){
-                if(Array.isArray(this.valueOf())){
-                    return this.valueOf()
-                }else{
-                    return [this.valueOf()]
-                }
-            }
-            //２次元配列を引数にとり、配列の全組み合わせを出力する
-            Array.prototype.getallcombinationarray = function(){
-                const _array = Object.assign([],this.valueOf())
-                const tmpCombinationArray = new Array()
-                if(_array.length >= 2){
-                    _array[0].forEach(element0 => {
-                        _array[1].forEach(element1 => {
-                            element0 = element0._2array()
-                            element1 = element1._2array()
-                            tmpCombinationArray.push(element0.concat(element1))
-                        })
-                    })
-                    _array.shift()
-                    _array.shift()
-                    _array.unshift(tmpCombinationArray)
-                    return _array.getallcombinationarray()
-                }else{
-                    return _array[0]
-                }
-            }
-
-            let temp = new Array();
-            this.list4generate.forEach(function(listName){
-                temp.push(util.target.lookupVariableByNameAndType(listName,Variable.LIST_TYPE).value);
-            });
-            temp = temp.getallcombinationarray();
-            console.log(temp);
+            temp = this.generateCombinationAllay(this.list4generate,util);
             if(this.list4generate.length >= 2){
                 temp.forEach(function(item){
-                    console.log(item);
                     variable.value.push(item.join(' '));
                 });
             }
@@ -282,14 +331,46 @@ class Scratch3NewBlocks { // とりあえず初期化してる
 
     }
 
+    /**
+     * return menu of list names.
+     * @return {Array} - names of lists.
+     */
+    makeAllPattern(args, util){
+        this.listName4makeAllPattern = args.LIST.id || args.LIST.name;
+        const variable = util.target.lookupVariableById(this.listName4makeAllPattern);
+        let brachToJump = 1;
+        if(!variable){
+            return;
+        }
+
+        if(this.loopFlag4MakeAllPattern){
+            console.log(args)
+            variable.value = new Array();
+            this.list4generate = new Array();
+            util.startBranch(brachToJump,this.loopFlag4MakeAllPattern);
+        }else{
+            allPatternOfListId = this.list4generate.permutation()
+            for(aPttern of allPatternOfListId){
+                temp = this.generateCombinationAllay(aPttern,util);
+                if(this.list4generate.length >= 2){
+                    temp.forEach(function(item){
+                        variable.value.push(item.join(' '));
+                    });
+                }
+            }
+            variable._monitorUpToDate = false;
+            this.listName4makeAllPattern = null;
+        }
+        this.loopFlag4MakeAllPattern = !this.loopFlag4MakeAllPattern;
+
+    }
+
     nominateItem(args,util,ob){
         console.log(args,util,ob)
-        args._monitorUpToDate = false;
-        if(this.listName4makePattern != null){
-            this.list4generate.push(args.TARGET);
+        if(this.listName4makePattern != null || this.listName4makeAllPattern != null){
+            this.list4generate.push(args.LIST.id || args.LIST.name);
         }
-        console.log(args.TARGET);
-
+        args.LIST._monitorUpToDate=false;
     }
 
     /**
@@ -298,19 +379,20 @@ class Scratch3NewBlocks { // とりあえず初期化してる
      */
     makeListsMenu() {
         const type = Variable.LIST_TYPE;
-        let list = this.runtime.getTargetForStage().getAllVariableNamesInScopeByType(Variable.LIST_TYPE);
+        let list = this.runtime.getEditingTarget().getAllVariableNamesInScopeByType(Variable.LIST_TYPE);
         console.log(list)
         if(list.length == 0){
             return [""];
         }
         let obj_list = new Array();
         for(let name of list){
-            /*
-            let variable = this.runtime.getTargetForStage().lookupVariableByNameAndType(name,Variable.LIST_TYPE);
-            variable.text = variable.name;
-            obj_list.push(variable);
-             */
-            obj_list.push(name)
+            let variable = this.runtime.getEditingTarget().lookupVariableByNameAndType(name,Variable.LIST_TYPE);
+            let item = new Object();
+            item.text = variable.name;
+            item.value = variable.id;
+            //item.id = variable.id;
+            obj_list.push(item);
+            //obj_list.push(name)
         }
         console.log(obj_list)
         return obj_list;
