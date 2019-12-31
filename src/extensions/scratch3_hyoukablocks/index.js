@@ -58,7 +58,7 @@ class Scratch3NewBlocks { // とりあえず初期化してる
     getInfo() {
         return {
             id: 'hyoukablocks', // guiで設定するextention id
-            color1: '#ffd700',
+            color1: '#c2c93a',
             name: 'hyouka Blocks', // 拡張機能の名前（自由命名）
             menuIconURI: menuIconURI, // 上で定義したiconを呼び出す
             blockIconURI: blockIconURI, // 上で定義したアイコンを呼び出す
